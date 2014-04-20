@@ -7,12 +7,27 @@ let round3 = roundN 3
 
 
 // Art. 3.2
-let contingents = List.init 11 (fun i -> (i + 1, 10 <<< i)) //FIXME: finish this...
+type Classification = N of int | R of int // N 1..4, R 1..9
+let allClassifications = [for i in [1..4] -> N i] @ [for i in [1..9] -> R i]
 
-let nationalContingents = List.init 4 (fun i -> (i + 1, 10 <<< i))
-let regionalContingents = List.init 7 (fun i -> (i + 1, 160 <<< i)) @ [(8, 10300)]  // @ [(9, rest)]
-// nationalContingents = [(1, 10); (2, 20); (3, 40); (4, 80)]
-// regionalContingents = [(1, 160); (2, 320); (3, 640); (4, 1280); (5, 2560); (6, 5120); (7, 10240); (8, 10300)]
+let allPlayers = 50323 // Swisstennis Website, 2014-04
+let r8Players = 10300
+let n1r7Players = (10 <<< 11) - 10
+let r9Players = allPlayers - n1r7Players - r8Players
+
+let allContingents = List.init 11 (fun i -> 10 <<< i) @ [r8Players; r9Players]
+let allRanks =
+  allContingents
+  |> List.scan (+) 0
+  |> Seq.pairwise
+  |> Seq.map (fun (l, h) -> (l + 1, h))
+  |> Seq.toList
+
+let interpolatedRanking rank =
+  List.zip allClassifications allRanks
+  |> Seq.find (fun (_, (r1, r2)) -> r1 <= rank && rank <= r2)
+  |> function (c, (r1, r2)) -> (c, (float (rank - r1)) / (float (r2 - r1 + 1)))
+
 
 
 type w = float

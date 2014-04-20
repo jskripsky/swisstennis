@@ -1,4 +1,4 @@
-#r "/home/js/HtmlAgilityPack.dll"
+#r "HtmlAgilityPack.dll"
 
 open System
 open System.Collections.Specialized

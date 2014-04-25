@@ -1,3 +1,5 @@
+module SwissTennis.Model
+
 // From http://www.swisstennis.ch/
 // Wettkampf > Rules & Regulations > Reglemente > Klassierungsrichtlinien (KR)
 // http://www.swisstennis.ch/upload/docs/wettkampf/2014_Klassierungsrichtlinien-d.pdf

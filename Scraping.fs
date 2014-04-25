@@ -19,7 +19,6 @@ type Player = {
 }
 
 // Search form: http://www.swisstennis.ch/?rub=24&id=102509
-// Vereinigung: All, 201, 210, 205, 206, 301, 302, 101, 103, 108, 204, 207, 211, 401, 203, 104, 212, 305, 304, 209, 105, 111
 
 let url = "http://www.swisstennis.ch/?rub=24&id=105057&abfrage=3"
 // POST data:
@@ -28,6 +27,7 @@ let url = "http://www.swisstennis.ch/?rub=24&id=105057&abfrage=3"
 //  Jahrgang=All&AltersKlasse=All&KlassierungsKategorie=N1
 let client = new WebClient()
 
+// "Vereinigungen"
 let regions = [
   201; 210; 205; 206; 301
   302; 101; 103; 108; 204

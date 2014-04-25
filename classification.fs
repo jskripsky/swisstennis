@@ -14,6 +14,7 @@ let r8Players = 10300
 let n1r7Players = (10 <<< 11) - 10
 let r9Players = allPlayers - n1r7Players - r8Players
 
+// allContingents = [10; 20; 40; 80; 160; 320; 640; 1280; 2560; 5120; 10240; 10300; 19553]
 let allContingents = List.init 11 (fun i -> 10 <<< i) @ [r8Players; r9Players]
 let allRanks =
   allContingents

@@ -145,3 +145,6 @@ let downloadDetails licNo =
   let fileName = sprintf "data/players/%s.html" (licNo.Replace(".", "-"))
   File.WriteAllText(fileName, html |> reduceHtml)
 
+let downloadAll licNoFile =
+  let list = File.ReadAllLines(licNoFile)
+  list |> Array.iter downloadDetails

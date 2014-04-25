@@ -130,7 +130,7 @@ let detailUrl licNo =
 
 let htmlCommentRegex = Regex(@"\<!--[\s\S]*?--\>")
 let htmlHeadRegex = Regex(@"\<head\>[\s\S]*?\</head\>")
-let simpleHead = "\n<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" \></head>\n"
+let simpleHead = "\n<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" /></head>\n"
 let emptyLineRegex = Regex(@"^\s+$[\r\n]*", RegexOptions.Multiline)
 let replaceWith (rx: Regex) (s': string) s = rx.Replace(s, s')
 let remove (rx: Regex) s = rx.Replace(s, String.Empty)

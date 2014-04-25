@@ -117,9 +117,31 @@ let download (classification: string) =
 
   list
   |> Seq.sortBy (fun p -> p.Rank)
-  |> writeToFile (sprintf "data/%s.txt" classification)
+  |> writeToFile (sprintf "data/lists/%s.txt" classification)
 
 let downloadAll () =
   let toString classification = (sprintf "%A" classification).Replace (" ", String.Empty)
   allClassifications |> List.iter (fun x -> printf "%s" (toString x); download (toString x))
+
+(* Detail scraper *)
+let detailUrl licNo =
+  "http://www.swisstennis.ch/custom/includes/wettkampf/klassierung_window/" +
+  sprintf "?rub=47&show=detail&LizenzNr=%s&lang=D" licNo
+
+let htmlCommentRegex = Regex(@"\<!--[\s\S]*?--\>")
+let htmlHeadRegex = Regex(@"\<head\>[\s\S]*?\</head\>")
+let simpleHead = "\n<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" \></head>\n"
+let emptyLineRegex = Regex(@"^\s+$[\r\n]*", RegexOptions.Multiline)
+let replaceWith (rx: Regex) (s': string) s = rx.Replace(s, s')
+let remove (rx: Regex) s = rx.Replace(s, String.Empty)
+let reduceHtml html =
+  html
+  |> remove htmlCommentRegex
+  |> replaceWith htmlHeadRegex simpleHead
+  |> remove emptyLineRegex
+
+let downloadDetails licNo =
+  let html = client.DownloadString(detailUrl licNo)
+  let fileName = sprintf "data/players/%s.html" (licNo.Replace(".", "-"))
+  File.WriteAllText(fileName, html |> reduceHtml)
 

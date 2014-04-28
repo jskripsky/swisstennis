@@ -46,16 +46,38 @@ let clubsP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[4]//p")
 let keysP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
 let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
 
-let matchResultTRs = rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
-let rowsOfCells =
-  let cast = Seq.cast<HtmlNode>
-  let getText (n: HtmlNode) = n.InnerText.Trim()
-  matchResultTRs
-  |> cast
-  |> Seq.map (fun r -> (r.SelectNodes("td") |> cast |> Seq.map getText))
+let innerText (n: HtmlNode) = n.InnerText.Trim()
+let extractLines (n: HtmlNode) =
+  n.ChildNodes
+  |> Seq.cast<HtmlNode>
+  |> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
+  |> Seq.map innerText
 
-res.ChildNodes
-|> Seq.cast<HtmlNode>
-|> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
-|> Seq.iter (fun n -> printfn "%s" <| n.InnerText.Trim ())
+let matchResultRows =
+  rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
+  |> Seq.cast<HtmlNode>
+
+// Note: We assume that the cells contain only text (i.e. no elements).
+let extractCellTexts (rows: seq<HtmlNode>) =
+  let extractCells (r: HtmlNode) =
+    r.SelectNodes("td")
+    |> Seq.cast<HtmlNode>
+    |> Seq.map innerText
+
+  rows
+  |> Seq.map extractCells
+
+
+let classificationData =
+  Seq.pairwise (extractLines keysP) (extractLines valuesP)
+  |> dict
+
+let parsePersData lines =
+  let split (s: String) = s.Split(':')
+  let trim (s: String) = s.Trim()
+
+  lines
+  |> Seq.map (split >> Seq.map trim)
+
+let persData = persP |> extractLines |> parsePersData
 

@@ -61,9 +61,9 @@ type MatchOutcome =
 	| LossWO // Z
 //	| Skip? (Art. 5.8)
 
-//type MatchResult = MatchOutcome * w  // w of rival
+//type MatchResultValue = MatchOutcome * w  // w of rival
 
-type Match = {
+type MatchResult = {
   DiscardedLoss: bool  // "X" or " "
   Date: Date  // "05.05.13"
   Tournament: Tournament

@@ -26,8 +26,6 @@ let interpolatedRanking rank =
   |> Seq.find (fun (_, (r1, r2)) -> r1 <= rank && rank <= r2)
   |> function (c, (r1, r2)) -> (c, (float (rank - r1)) / (float (r2 - r1 + 1)))
 
-
-
 // Art. 5.6, 5.7
 let term factor sign w0 (defeatedWs: seq<w>) (lostWs: seq<w>) =
 	let eSum w0 ws = Seq.sumBy exp ws + exp w0
@@ -45,7 +43,6 @@ let W : Calc = term (1.0 / 2.0) -1.0
 // Art. 5.7
 let R: Calc = term (1.0 / 6.0) 1.0
 
-
 // Art. 5.1
 let roundN n x =
 	let shift = 10.0 ** (float n)
@@ -62,7 +59,6 @@ let C w0 defeatedWs lostWs = W w0 defeatedWs lostWs + R w0 defeatedWs lostWs  |>
 // Art. 5.5
 let numOfLossesToIgnore matches = matches / 6 |> min 4
 // [0; 1; 5; 6; 7; 12; 18; 24; 30; 36] |> List.map numOfLossesToIgnore = [0; 0; 0; 1; 1; 2; 3; 4; 4; 4]
-
 
 // Art. 5.2: Ausgangspunkt für die Berechnung des neuen Wettkampfwertes W ist der Wettkampfwert W0, der vom Wettkampfwert 5 (W5) der vorangegangenen Periode abgeleitet wird. Der Mindestausgangswert beträgt 1.
 // Art. 5.3: 

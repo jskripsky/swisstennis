@@ -1,12 +1,8 @@
-module SwissTennis.Model
+module SwissTennis.Calculations
 
 // From http://www.swisstennis.ch/
 // Wettkampf > Rules & Regulations > Reglemente > Klassierungsrichtlinien (KR)
 // http://www.swisstennis.ch/upload/docs/wettkampf/2014_Klassierungsrichtlinien-d.pdf
-
-// Art. 3.1
-type Classification = N of int | R of int // N 1..4, R 1..9
-let allClassifications = [for i in [1..4] -> N i] @ [for i in [1..9] -> R i]
 
 // Art. 3.2
 let allPlayers = 50323 // Swisstennis Website, 2014-04
@@ -28,17 +24,6 @@ let interpolatedRanking rank =
   |> Seq.find (fun (_, (r1, r2)) -> r1 <= rank && rank <= r2)
   |> function (c, (r1, r2)) -> (c, (float (rank - r1)) / (float (r2 - r1 + 1)))
 
-
-type w = float
-
-type MatchOutcome =
-	| Win // S
-	| Loss // N
-	| WinWO // W
-	| LossWO // Z
-//	| Skip? (Art. 5.8)
-
-type MatchResult = MatchOutcome * w  // w of rival
 
 
 // Art. 5.6, 5.7
@@ -86,7 +71,6 @@ let numOfLossesToIgnore matches = matches / 6 |> min 4
 
 // Art. 8.1 Berücksichtigung der Resultate: Das Klassierungsjahr wird in zwei Klassierungsperioden eingeteilt.
 // Die erste dauert vom 1. April bis zum 30. September, die zweite vom 1. Oktober bis zum 31. März des folgenden Jahres.
-type Date = System.DateTime
 let periods startYear = [(Date (startYear, 4, 1), Date (startYear, 9,30)); (Date (startYear, 10, 1), Date (startYear + 1, 3, 31))]
 // periods 2014 = FIXME!
 

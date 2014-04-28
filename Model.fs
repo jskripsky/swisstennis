@@ -1,5 +1,18 @@
 module SwissTennis.Model
 
+type Date = System.DateTime
+
+(* Classification *)
+
+// Art. 3.1
+type Classification =
+  | N of int
+  | R of int // N 1..4, R 1..9
+  static member All = [for i in [1..4] -> N i] @ [for i in [1..9] -> R i]
+
+type value = float
+
+(* Swiss Tennis Data *)
 type Player = {
   LicNo: string
   Name: string
@@ -16,24 +29,24 @@ type PlayerDetails = {
   LicenseNo: string  // "000-00-000-0"
   Clubs: string[]  // ["TC Sporting Derendingen (Stammmitglied)"]
 
-  CurrentClassification: string  // "R3"
-  CurrentClassificationValue: float  // 7.820
-  CurrentCompetitionValue: float  // 7.291
-  CurrentRiskValue: float  // 0.529
+  CurrentClassification: Classification  // "R3"
+  CurrentClassificationValue: value  // 7.820
+  CurrentCompetitionValue: value  // 7.291
+  CurrentRiskValue: value  // 0.529
   RankNo: int  // 757
   MatchCount: int // 21
-  WOCount: int  0
+  WOCount: int  // 0
   WODeduction: string  // "nein"
   AgeCategory: string  // "50+"
-  StatusLicense: string  // "aktiv"
-  StatusIC: string  // "IC berechtigt"
-  StatusJIC: string  // "nicht JIC"
-  LastClassification: string  // "R3"
+  StatusLicense: string  // "aktiv" // bool?
+  StatusIC: string  // "IC berechtigt" // bool?
+  StatusJIC: string  // "nicht JIC" // bool?
+  LastClassification: Classification  // "R3"
 }
 
 type TournamentType =
-  | IC
-  | Reg
+  | InterClub
+  | Regular
 
 type Tournament = {
   ID: int  // 229353
@@ -41,14 +54,23 @@ type Tournament = {
   Name: string  // "IC 45+ NLC"
 }
 
+type MatchOutcome =
+	| Win // S
+	| Loss // N
+	| WinWO // W
+	| LossWO // Z
+//	| Skip? (Art. 5.8)
+
+//type MatchResult = MatchOutcome * w  // w of rival
+
 type Match = {
   DiscardedLoss: bool  // "X" or " "
-  Date: DateTime  // "05.05.13"
+  Date: Date  // "05.05.13"
   Tournament: Tournament
-  OpponentName: string
+  OpponentName: string  // TODO: remove? (redundancy)
   OpponentLicenseNo: string
-  CompetitionValue: float  // (4.L.)...
+  CompetitionValue: value  // (4.L.)...
   SetResults: (int * int)[]  // [(6, 3); (6, 3)]
-  Code: char
+  OutCome: MatchOutcome
 }
 

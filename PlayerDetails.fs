@@ -1,4 +1,13 @@
+#r "HtmlAgilityPack.dll"
+#r "SwissTennis.Scraping.dll"
 
+open System
+open System.Text
+open System.Text.RegularExpressions
+open System.IO
+open System.Net
+open HtmlAgilityPack
+open SwissTennis.Model
 
 (* Detail scraper *)
 let detailUrl licNo =

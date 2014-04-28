@@ -2,7 +2,6 @@
 #r "SwissTennis.Scraping.dll"
 
 open System
-open System.Collections.Specialized
 open System.Text
 open System.Text.RegularExpressions
 open System.IO

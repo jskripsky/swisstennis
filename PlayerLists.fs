@@ -1,4 +1,5 @@
 #r "HtmlAgilityPack.dll"
+#r "SwissTennis.Scraping.dll"
 
 open System
 open System.Collections.Specialized
@@ -7,16 +8,7 @@ open System.Text.RegularExpressions
 open System.IO
 open System.Net
 open HtmlAgilityPack
-
-type Player = {
-  LicNo: string
-  Name: string
-  Classification: string
-  Rank: int
-  ClassificationValue: float
-  AgeCategory: int
-  State: char
-}
+open SwissTennis.Model
 
 // Search form: http://www.swisstennis.ch/?rub=24&id=102509
 
@@ -44,7 +36,7 @@ let fetchHtml (classification: string) (birthYear: int) (region: int)=
   let nvc = NameValueCollection()
   let toString x = if x > 0 then (string x) else "All"
   let postData =
-    ["AbfrageArt", "Region" 
+    ["AbfrageArt", "Region"
      "AltersKlasse", "All"
      "Geschlecht2", "/?rub=24&id=102509&Geschlecht2=1"
      "Jahrgang", (birthYear |> toString)
@@ -123,28 +115,3 @@ let downloadAll () =
   let toString classification = (sprintf "%A" classification).Replace (" ", String.Empty)
   allClassifications |> List.iter (fun x -> printf "%s" (toString x); download (toString x))
 
-(* Detail scraper *)
-let detailUrl licNo =
-  "http://www.swisstennis.ch/custom/includes/wettkampf/klassierung_window/" +
-  sprintf "?rub=47&show=detail&LizenzNr=%s&lang=D" licNo
-
-let htmlCommentRegex = Regex(@"\<!--[\s\S]*?--\>")
-let htmlHeadRegex = Regex(@"\<head\>[\s\S]*?\</head\>")
-let simpleHead = "\n<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" /></head>\n"
-let emptyLineRegex = Regex(@"^\s+$[\r\n]*", RegexOptions.Multiline)
-let replaceWith (rx: Regex) (s': string) s = rx.Replace(s, s')
-let remove (rx: Regex) s = rx.Replace(s, String.Empty)
-let reduceHtml html =
-  html
-  |> remove htmlCommentRegex
-  |> replaceWith htmlHeadRegex simpleHead
-  |> remove emptyLineRegex
-
-let downloadDetails licNo =
-  let html = client.DownloadString(detailUrl licNo)
-  let fileName = sprintf "data/players/%s.html" (licNo.Replace(".", "-"))
-  File.WriteAllText(fileName, html |> reduceHtml)
-
-let downloadAll licNoFile =
-  let list = File.ReadAllLines(licNoFile)
-  list |> Array.iter downloadDetails

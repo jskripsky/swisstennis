@@ -22,21 +22,21 @@ let allRanks =
   |> Seq.toList
 
 let interpolatedRanking rank =
-  List.zip allClassifications allRanks
+  List.zip (Classification.All) allRanks
   |> Seq.find (fun (_, (r1, r2)) -> r1 <= rank && rank <= r2)
   |> function (c, (r1, r2)) -> (c, (float (rank - r1)) / (float (r2 - r1 + 1)))
 
 // Art. 5.6, 5.7
-let term factor sign w0 (defeatedWs: seq<w>) (lostWs: seq<w>) =
-	let eSum w0 ws = Seq.sumBy exp ws + exp w0
-	let neg ws = Seq.map (~-) ws
+let term factor sign w0 (defeatedWs: seq<value>) (lostWs: seq<value>) =
+  let eSum w0 ws = Seq.sumBy exp ws + exp w0
+  let neg ws = Seq.map (~-) ws
 
-	let defeatSum = eSum w0 defeatedWs
-	let lostSum = eSum -w0 (neg lostWs) 
+  let defeatSum = eSum w0 defeatedWs
+  let lostSum = eSum -w0 (neg lostWs) 
 
-	factor * (log defeatSum + sign * (log lostSum))
+  factor * (log defeatSum + sign * (log lostSum))
 
-type Calc = w -> seq<w> -> seq<w> -> w
+type Calc = value -> seq<value> -> seq<value> -> value
 
 // Art. 5.6
 let W : Calc = term (1.0 / 2.0) -1.0
@@ -45,8 +45,8 @@ let R: Calc = term (1.0 / 6.0) 1.0
 
 // Art. 5.1
 let roundN n x =
-	let shift = 10.0 ** (float n)
-	round (x * shift) / shift
+  let shift = 10.0 ** (float n)
+  round (x * shift) / shift
 
 let round3 = roundN 3
 // round3 0.1234567 = 0.123

@@ -1,5 +1,7 @@
 module SwissTennis.Model
 
+open System
+
 type Date = System.DateTime
 
 (* Classification *)
@@ -8,6 +10,7 @@ type Date = System.DateTime
 type Classification =
   | N of int
   | R of int // N 1..4, R 1..9
+  override x.ToString () = (sprintf "%A" x).Replace (" ", String.Empty)
   static member All = [for i in [1..4] -> N i] @ [for i in [1..9] -> R i]
 
 type value = float
@@ -55,13 +58,13 @@ type Tournament = {
 }
 
 type MatchOutcome =
-	| Win // S
-	| Loss // N
-	| WinWO // W
-	| LossWO // Z
+  | Win // S
+  | Loss // N
+  | WinWO // W
+  | LossWO // Z
 //	| Skip? (Art. 5.8)
 
-//type MatchResultValue = MatchOutcome * w  // w of rival
+//type MatchResultValue = MatchOutcome * value  // value of rival
 
 type MatchResult = {
   DiscardedLoss: bool  // "X" or " "

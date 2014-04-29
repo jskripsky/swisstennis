@@ -4,6 +4,7 @@
 open System
 open System.Text
 open System.Text.RegularExpressions
+open System.Collections.Specialized
 open System.IO
 open System.Net
 open HtmlAgilityPack
@@ -111,6 +112,6 @@ let download (classification: string) =
   |> writeToFile (sprintf "data/lists/%s.txt" classification)
 
 let downloadAll () =
-  let toString classification = (sprintf "%A" classification).Replace (" ", String.Empty)
-  allClassifications |> List.iter (fun x -> printf "%s" (toString x); download (toString x))
+  Classification.All
+  |> List.iter (fun x -> printf "%s" (string x); download (string x))
 

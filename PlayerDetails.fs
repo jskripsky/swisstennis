@@ -7,6 +7,7 @@ open System.Text.RegularExpressions
 open System.IO
 open System.Net
 open HtmlAgilityPack
+open OldAHVNumber
 open SwissTennis.Model
 
 (* Detail scraper *)
@@ -37,54 +38,53 @@ let downloadAll licNoFile =
 
 
 
-
-
 (* HTML processing *)
-let rootEl = htmlDoc.DocumentNode
-let persP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[2]//p")
-let clubsP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[4]//p")
-let keysP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
-let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
+let extractDetails (htmlDoc: HtmlDocument) =
+  let rootEl = htmlDoc.DocumentNode
+  let persP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[2]//p")
+  let clubsP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[4]//p")
+  let keysP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
+  let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
 
-let innerText (n: HtmlNode) = n.InnerText.Trim()
-let extractLines (n: HtmlNode) =
-  n.ChildNodes
-  |> Seq.cast<HtmlNode>
-  |> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
-  |> Seq.map innerText
-
-let matchResultRows =
-  rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
-  |> Seq.cast<HtmlNode>
-
-// Note: We assume that the cells contain only text (i.e. no elements).
-let extractCellTexts (rows: seq<HtmlNode>) =
-  let extractCells (r: HtmlNode) =
-    r.SelectNodes("td")
+  let innerText (n: HtmlNode) = n.InnerText.Trim()
+  let extractLines (n: HtmlNode) =
+    n.ChildNodes
     |> Seq.cast<HtmlNode>
+    |> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
     |> Seq.map innerText
 
-  rows
-  |> Seq.map extractCells
+  let matchResultRows =
+    rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
+    |> Seq.cast<HtmlNode>
+
+  // Note: We assume that the cells contain only text (i.e. no elements).
+  let extractCellTexts (rows: seq<HtmlNode>) =
+    let extractCells (r: HtmlNode) =
+      r.SelectNodes("td")
+      |> Seq.cast<HtmlNode>
+      |> Seq.map innerText
+
+    rows
+    |> Seq.map extractCells
 
 
-let classificationData =
-  Seq.pairwise (extractLines keysP) (extractLines valuesP)
-  |> dict
+  let classificationData =
+    Seq.zip (extractLines keysP) (extractLines valuesP)
+    |> dict
 
-let parsePersData lines =
-  let split (s: String) = s.Split(':')
-  let trim (s: String) = s.Trim()
-  let toTuple = function
-    | k::v::_ -> (k, v)
-    | _ as list -> failwith (sprintf "Invalid '[key; value]' list: %A." list)
-  let parseLine line =
+  let parseKeyValueLine line =
+    let split (s: String) = s.Split(':')
+    let trim (s: String) = s.Trim()
+    let toTuple = function
+      | k::v::_ -> (k, v)
+      | _ as list -> failwith (sprintf "Invalid '[key; value]' list: %A." list)
     line
     |> split
     |> Array.map trim
     |> Array.toList
     |> toTuple
-  lines |> Seq.map parseLine
 
-let persData = persP |> extractLines |> parsePersData
+  persP
+  |> extractLines
+  |> Seq.map parseKeyValueLine
 

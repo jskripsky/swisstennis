@@ -32,5 +32,7 @@ let getBirthDate ((_, birthYear, sexAndBirthDay, _): AHVNo as n) =
   let year = birthYear + (if birthYear >= 10 then 1900 else 2000)
   DateTime(year, month, day)
 
-let parseBirthDate (s: string) = s |> parseAHVNo |> getBirthDate
+let parseAndExtractAHVData (s: string) =
+  let no = parseAHVNo s
+  (no |> getSex, no |> getBirthDate)
 

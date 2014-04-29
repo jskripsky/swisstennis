@@ -22,7 +22,8 @@ let getSex ((_, _, sexAndBirthDay, _): OldAHVNo) =
 let getBirthDate ((_, birthYear, sexAndBirthDay, _): OldAHVNo as n) =
   let dayInYear = (sexAndBirthDay - 100) % 400
   if dayInYear = 0 then failwith (sprintf "Birthdate unknown: %A" n)
-  // see http://www.ahvnummer.ch/ahv-kalender.htm
+  // taken from see http://www.ahvnummer.ch/ahv-kalender.htm
+  // last number added as sentinel
   let monthStarts = [1; 32; 63; 101; 132; 163; 201; 232; 263; 301; 332; 363; 401]
   let month = monthStarts |> List.findIndex (fun x -> dayInYear < x)
   let day = dayInYear - monthStarts.[month - 1] + 1

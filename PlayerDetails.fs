@@ -44,7 +44,7 @@ let extractDetails (htmlDoc: HtmlDocument) =
   let persP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[2]//p")
   let clubsP = rootEl.SelectSingleNode ("//table[1]//td[1]//table//tr[4]//p")
   let keysP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
-  let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[1]/p")
+  let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[2]/p")
 
   let innerText (n: HtmlNode) = n.InnerText.Trim()
   let extractLines (n: HtmlNode) =
@@ -52,25 +52,6 @@ let extractDetails (htmlDoc: HtmlDocument) =
     |> Seq.cast<HtmlNode>
     |> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
     |> Seq.map innerText
-
-  let matchResultRows =
-    rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
-    |> Seq.cast<HtmlNode>
-
-  // Note: We assume that the cells contain only text (i.e. no elements).
-  let extractCellTexts (rows: seq<HtmlNode>) =
-    let extractCells (r: HtmlNode) =
-      r.SelectNodes("td")
-      |> Seq.cast<HtmlNode>
-      |> Seq.map innerText
-
-    rows
-    |> Seq.map extractCells
-
-
-  let classificationData =
-    Seq.zip (extractLines keysP) (extractLines valuesP)
-    |> dict
 
   let parseKeyValueLine line =
     let split (s: String) = s.Split(':')
@@ -84,7 +65,37 @@ let extractDetails (htmlDoc: HtmlDocument) =
     |> Array.toList
     |> toTuple
 
-  persP
-  |> extractLines
-  |> Seq.map parseKeyValueLine
 
+  (* Competition Results *)
+  let matchResultRows =
+    let trs = rootEl.SelectNodes("//table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']")
+    if trs <> null then
+      trs |> Seq.cast<HtmlNode>
+    else
+      Seq.empty
+
+  // Note: We assume that the cells contain only text (i.e. no elements).
+  let extractCellTexts (rows: seq<HtmlNode>) =
+    let extractCells (r: HtmlNode) =
+      let tds = r.SelectNodes("td")
+      if tds <> null then
+        tds
+        |> Seq.cast<HtmlNode>
+        |> Seq.map innerText
+      else
+        Seq.empty
+    rows
+    |> Seq.map extractCells
+
+  let pers =
+    persP
+    |> extractLines
+    |> Seq.map parseKeyValueLine
+  let clubs =
+    clubsP
+    |> extractLines
+    |> Seq.filter ((<>) String.Empty)
+  let classificationData =
+    Seq.zip (extractLines keysP) (extractLines valuesP)
+
+  (pers, clubs, classificationData)

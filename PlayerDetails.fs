@@ -75,9 +75,16 @@ let classificationData =
 let parsePersData lines =
   let split (s: String) = s.Split(':')
   let trim (s: String) = s.Trim()
-
-  lines
-  |> Seq.map (split >> Seq.map trim)
+  let toTuple = function
+    | k::v::_ -> (k, v)
+    | _ as list -> failwith (sprintf "Invalid '[key; value]' list: %A." list)
+  let parseLine line =
+    line
+    |> split
+    |> Array.map trim
+    |> Array.toList
+    |> toTuple
+  lines |> Seq.map parseLine
 
 let persData = persP |> extractLines |> parsePersData
 

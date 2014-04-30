@@ -52,12 +52,13 @@ type MatchOutcome =
 
 // TODO: DB primary key: (Date, Tournament, MyID, OpponentID)?
 type MatchResult = {
-  DiscardedLoss: bool  // "X" or " "
+  IsDiscardedLoss: bool  // "X" or " "
   Date: Date  // "05.05.13"
   Tournament: Tournament
   OpponentName: string  // TODO: remove? (redundancy)
   OpponentLicenseNo: string
   OpponentCompetitionValue: value  // (4.L.)...
+  OpponentNewClassification: Classification  // "R5"
   SetResults: (int * int) list  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
   OutCome: MatchOutcome
 }

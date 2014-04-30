@@ -40,15 +40,22 @@ type PlayerDetails = {
   MatchCount: int // 21
   WOCount: int  // 0
   WODeduction: string  // "nein"
-  AgeCategory: string  // "50+"
-  StatusLicense: string  // "aktiv" // bool?
-  StatusIC: string  // "IC berechtigt" // bool?
-  StatusJIC: string  // "nicht JIC" // bool?
+  AgeCategory: string  // "35+"
+  StatusLicense: string  // "aktiv", "suspendiert" // bool?
+  StatusIC: string  // "IC berechtigt", "nicht IC berechtigt" // bool?
+  StatusJIC: string  // "JIC  berechtigt", "nicht JIC  berechtigt" // bool?
   LastClassification: Classification  // "R3"
 
   // take from MatchResults of opponents detail sheet
   LastCompetitionsValue4L: value
 }
+
+let ageCategories = seq {
+  for i in [10..2..18] do yield ((string i) + "&U")
+  yield "A"; yield "35+"  // women: "30+"; "40+"
+  for i in [45..5..75] do yield ((string i) + "+")
+}
+
 
 type TournamentType =
   | InterClub

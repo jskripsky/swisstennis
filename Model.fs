@@ -44,23 +44,26 @@ type Tournament = {
 type MatchOutcome =
   | Win // S
   | Loss // N
-  | WinWO // W
-  | LossWO // Z
-//	| Skip? (Art. 5.8)
+
+type MatchSetResults =
+  | WO // W
+  | Sets of (int * int) list  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
 
 //type MatchResultValue = MatchOutcome * value  // value of rival
 
 // TODO: DB primary key: (Date, Tournament, MyID, OpponentID)?
 type MatchResult = {
-  IsDiscardedLoss: bool  // "X" or " "
   Date: Date  // "05.05.13"
   Tournament: Tournament
+  Outcome: MatchOutcome
+  SetResults: MatchSetResults
+
   OpponentName: string  // TODO: remove? (redundancy)
   OpponentLicenseNo: string
   OpponentCompetitionValue: value  // (4.L.)...
-  OpponentNewClassification: Classification  // "R5"
-  SetResults: (int * int) list  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
-  OutCome: MatchOutcome
+  OpponentNewClassification: Classification option  // "R5"
+
+  IsDiscardedLoss: bool  // "X" or " "
 }
 
 type PlayerDetails = {
@@ -81,7 +84,7 @@ type PlayerDetails = {
   StatusLicense: string  // "aktiv", "suspendiert" // bool?
   StatusIC: string  // "IC berechtigt", "nicht IC berechtigt" // bool?
   StatusJIC: string  // "JIC  berechtigt", "nicht JIC  berechtigt" // bool?
-  LastClassification: Classification  // "R3"
+  LastClassification: Classification option  // "R3"
 
   // take from MatchResults of opponents detail sheet
   // LastCompetitionsValue4L: value

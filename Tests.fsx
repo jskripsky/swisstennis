@@ -1,13 +1,24 @@
+#r "HtmlAgilityPack.dll"
 #r "SwissTennis.Scraping.dll"
 
 open System
+open System.IO
 open HotFeet.OldAHVNumber
 open SwissTennis.Model
 
 
 let doc = HtmlDocument()
-doc.Load("downloads/players/790-74-165-0.html")
-extractDetails doc
+
+let allPlayers =
+  Directory.GetFiles("downloads/players/", "*.html")
+  |> Array.map (fun path ->
+    printfn "%s, " path
+    doc.Load(path)
+    extractDetails doc
+  )
+
+//doc.Load("downloads/players/790-74-165-0.html")
+//extractDetails doc
 
 
 (*

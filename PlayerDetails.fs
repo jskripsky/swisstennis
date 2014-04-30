@@ -81,44 +81,53 @@ let extractDetails (htmlDoc: HtmlDocument) =
     if tds <> null then
       tds
       |> Seq.cast<HtmlNode>
-      |> Seq.map innerHtml
+      |> Seq.map innerText // FIXME: switch to innerHtml later!
     else
       Seq.empty
 
+  let parseClassificationOption s =
+    if not (String.IsNullOrEmpty s) then
+      Some(Classification.Parse s)
+    else
+      None
+
   let parseMatchResult (cells: string[]) =
-    let (outcome, discardedLoss) =
-      let (first, last) = (cells.[0], cells.[7])
-      match (first, last) with
-      | (_, "S") -> (Win, false)
-      | ("W", _) -> (WinWO, false)
-      | (c, "N") -> (Loss, c = "X")
-      | ("Z", _) -> (LossWO, false)
-      | _ -> failwithf "Invalid combination of first and last column: '%s', '%s'" first last
-    let setResults =
-      let parseSet s =
+    let parseSetResults (s: string) =
+      let parseSet s' =
         let toTuple =
           function
           |  [|me; opponent|] -> (me, opponent)
-          | _ -> failwithf "Invalid set result: %s" s
-        s.Split [|':'|]
+          | _ -> failwithf "Invalid set result: %s" s'
+        s'.Split [|':'|]
         |> Array.map int
         |> toTuple
 
-      (cells.[6].Replace ("&nbsp;", " ")).Split [|' '|]
+      (s.Replace ("&nbsp;", " ")).Split [|' '|]
       |> Array.map parseSet
       |> Array.toList
       
+    let (outcome, setResults, discardedLoss) =
+      let (first, sets, last) = (cells.[0], cells.[6], cells.[7])
+      match (first, last) with
+      | (_, "S") -> (Win, sets |> parseSetResults |> Sets , false)
+      | (c, "N") -> (Loss, sets |> parseSetResults |> Sets, c = "X")
+      | ("W", _) | (_, "W") -> (Win, WO, false)
+      | ("Z", _) | (_, "Z") -> (Loss, WO, false)
+      | _ -> failwithf "Invalid combination of first and last column: '%s', '%s'" first last
+
     {
-      IsDiscardedLoss = discardedLoss
       Date = DateTime.ParseExact (cells.[1], "dd.MM.yy", null)
       Tournament =
         { ID = -1; Type = Regular; Name = cells.[2] }  // FIXME
+      Outcome = outcome
+      SetResults = setResults
+
       OpponentName = cells.[3] // FIXME
       OpponentLicenseNo = "[FIXME]" // cells.[3]
       OpponentCompetitionValue = cells.[4] |> float
-      OpponentNewClassification = cells.[5] |> Classification.Parse
-      SetResults = setResults
-      OutCome = outcome
+      OpponentNewClassification = cells.[5] |> parseClassificationOption
+
+      IsDiscardedLoss = discardedLoss
     }    
 
   let matchResults =
@@ -144,8 +153,14 @@ let extractDetails (htmlDoc: HtmlDocument) =
     |> dict
 
   let v key =
+    //printf "Reading '%s'..." key
     let (found, res) = cl.TryGetValue key
+    //printf "found: %A, text: '%s'" found res
     if found then res else null
+
+  let intOrZero s =
+    let (_, res) = Int32.TryParse s
+    res
 
   {
     Name = pers.["Name"]
@@ -158,14 +173,14 @@ let extractDetails (htmlDoc: HtmlDocument) =
     CurrentCompetitionValue = v "Aktueller Wettkampfwert" |> float
     CurrentRiskValue = v "Aktueller Risikozuschlag" |> float
     RankNo = v "Ranglistennummer" |> int
-    MatchCount = v "Anzahl Spiele" |> int
+    MatchCount = v "Anzahl Spiele" |> intOrZero
     WOCount = v "Anzahl w.o." |> int
     WODeduction = v "Abzug w.o."
     AgeCategory = v "Alterskategorie"
     StatusLicense = v "Status Lizenz"
     StatusIC = v "Status IC"
     StatusJIC = v "Status JIC"
-    LastClassification = v "Letzte Klassierung" |> Classification.Parse
+    LastClassification = v "Letzte Klassierung" |> parseClassificationOption
 
     // take from MatchResults of opponents detail sheet
     //LastCompetitionsValue4L = ...

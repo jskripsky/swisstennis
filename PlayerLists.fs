@@ -10,6 +10,9 @@ open System.Net
 open HtmlAgilityPack
 open SwissTennis.Model
 
+
+let private downloadsDir = "downloads/lists"
+
 // Search form: http://www.swisstennis.ch/?rub=24&id=102509
 
 let url = "http://www.swisstennis.ch/?rub=24&id=105057&abfrage=3"
@@ -109,7 +112,7 @@ let download (classification: string) =
 
   list
   |> Seq.sortBy (fun p -> p.Rank)
-  |> writeToFile (sprintf "data/lists/%s.txt" classification)
+  |> writeToFile (sprintf "%s/%s.txt" downloadsDir classification)
 
 let downloadAll () =
   Classification.All

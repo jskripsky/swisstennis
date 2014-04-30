@@ -10,6 +10,8 @@ open HtmlAgilityPack
 open OldAHVNumber
 open SwissTennis.Model
 
+let private downloadsDir = "downloads/players"
+
 (* Detail scraper *)
 let detailUrl licNo =
   "http://www.swisstennis.ch/custom/includes/wettkampf/klassierung_window/" +
@@ -29,7 +31,7 @@ let reduceHtml html =
 
 let downloadDetails licNo =
   let html = client.DownloadString(detailUrl licNo) |> reduceHtml
-  let fileName = sprintf "data/players/%s.html" (licNo.Replace(".", "-"))
+  let fileName = sprintf "%s/%s.html" downloadsDir (licNo.Replace(".", "-"))
   File.WriteAllText(fileName, html)
 
 let downloadAll licNoFile =

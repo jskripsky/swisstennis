@@ -75,50 +75,98 @@ let extractDetails (htmlDoc: HtmlDocument) =
     else
       Seq.empty
 
-  // Note: We assume that the cells contain only text (i.e. no elements).
-  let extractCellTexts (rows: seq<HtmlNode>) =
-    let extractCells (r: HtmlNode) =
-      let tds = r.SelectNodes("td")
-      if tds <> null then
-        tds
-        |> Seq.cast<HtmlNode>
-        |> Seq.map innerText
-      else
-        Seq.empty
-    rows
-    |> Seq.map extractCells
+  let extractCellTexts (row: HtmlNode) =
+    let tds = row.SelectNodes("td")
+    if tds <> null then
+      tds
+      |> Seq.cast<HtmlNode>
+      |> Seq.map innerText
+    else
+      Seq.empty
+
+  let parseMatchResult (cells: string[]) =
+    let (outcome, discardedLoss) =
+      let (first, last) = (cells.[0], cells.[7])
+      match (first, last) with
+      | (_, "S") -> (Win, false)
+      | ("W", _) -> (WinWO, false)
+      | (c, "N") -> (Loss, c = "X")
+      | ("Z", _) -> (LossWO, false)
+      | _ -> failwithf "Invalid combination of first and last column: '%s', '%s'" first last
+    let setResults =
+      let parseSet s =
+        let toTuple =
+          function
+          |  [|me; opponent|] -> (me, opponent)
+          | _ -> failwithf "Invalid set result: %s" s
+        s.Split [|':'|]
+        |> Array.map int
+        |> toTuple
+
+      (cells.[6].Replace ("&nbsp;", " ")).Split [|' '|]
+      |> Array.map parseSet
+      |> Array.toList
+      
+    {
+      IsDiscardedLoss = discardedLoss
+      Date = DateTime.ParseExact (cells.[1], "dd.MM.yy", null)
+      Tournament = { ID = -1; Type = Regular; Name = "[FIXME]" }
+      OpponentName = "[FIXME]"
+      OpponentLicenseNo = "[FIXME]"
+      OpponentCompetitionValue = cells.[4] |> float
+      OpponentNewClassification = cells.[5] |> Classification.Parse
+      SetResults = setResults
+      OutCome = outcome
+    }    
+
+  let matchResults =
+    matchResultRows
+    |> Seq.map (extractCellTexts >> Seq.toArray)
+    |> Seq.map parseMatchResult
+    |> Seq.toList
 
   let pers =
     persP
     |> extractLines
     |> Seq.map parseKeyValueLine
+    |> dict
+
   let clubs =
     clubsP
     |> extractLines
     |> Seq.filter ((<>) String.Empty)
-  let classificationData =
+    |> Seq.toList
+
+  let cl =
     Seq.zip (extractLines keysP) (extractLines valuesP)
+    |> dict
 
-  (pers, clubs, classificationData)
+  let v key =
+    let (found, res) = cl.TryGetValue key
+    if found then res else null
 
-let keys = [
-  "Aktuelle Klassierung"  // Classification (e.g. "R1", "N4 (100)",..)
-  "Aktueller Klassierungswert"  // value
-  "Aktueller Wettkampfwert"  // value
-  "Aktueller Risikozuschlag"  // value
-  "Ranglistennummer"  // int
-  "Anzahl Spiele" // int
-  "Anzahl w.o."  // int
-  "Abzug w.o."  // DU
-  "Alterskategorie"  // DU
-  "Status Lizenz"  // DU
-  "Status IC"  // DU
-  "Status JIC" // DU, optional
-  "Letzte Klassierung"]  // Classification
+  {
+    Name = pers.["Name"]
+    FirstName = pers.["Vorname"]
+    LicenseNo = pers.["Lizenz-Nr"]
+    Clubs = clubs
 
-let duKeys = [
-  "Abzug w.o."
-  "Alterskategorie"
-  "Status Lizenz"
-  "Status IC"
-  "Status JIC"]
+    CurrentClassification = v "Aktuelle Klassierung" |> Classification.Parse
+    CurrentClassificationValue = v "Aktueller Klassierungswert" |> float
+    CurrentCompetitionValue = v "Aktueller Wettkampfwert" |> float
+    CurrentRiskValue = v "Aktueller Risikozuschlag" |> float
+    RankNo = v "Ranglistennummer" |> int
+    MatchCount = v "Anzahl Spiele" |> int
+    WOCount = v "Anzahl w.o." |> int
+    WODeduction = v "Abzug w.o."
+    AgeCategory = v "Alterskategorie"
+    StatusLicense = v "Status Lizenz"
+    StatusIC = v "Status IC"
+    StatusJIC = v "Status JIC"
+    LastClassification = v "Letzte Klassierung" |> Classification.Parse
+
+    // take from MatchResults of opponents detail sheet
+    //LastCompetitionsValue4L = ...
+
+    MatchResults = matchResults
+  }

@@ -39,7 +39,7 @@ let term factor sign w0 (defeatedWs: seq<value>) (lostWs: seq<value>) =
 type Calc = value -> seq<value> -> seq<value> -> value
 
 // Art. 5.6
-let W : Calc = term (1.0 / 2.0) -1.0
+let W: Calc = term (1.0 / 2.0) -1.0
 // Art. 5.7
 let R: Calc = term (1.0 / 6.0) 1.0
 

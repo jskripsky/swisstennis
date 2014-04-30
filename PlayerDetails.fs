@@ -99,3 +99,25 @@ let extractDetails (htmlDoc: HtmlDocument) =
     Seq.zip (extractLines keysP) (extractLines valuesP)
 
   (pers, clubs, classificationData)
+
+let keys = [
+  "Aktuelle Klassierung"  // Classification (e.g. "R1", "N4 (100)",..)
+  "Aktueller Klassierungswert"  // value
+  "Aktueller Wettkampfwert"  // value
+  "Aktueller Risikozuschlag"  // value
+  "Ranglistennummer"  // int
+  "Anzahl Spiele" // int
+  "Anzahl w.o."  // int
+  "Abzug w.o."  // DU
+  "Alterskategorie"  // DU
+  "Status Lizenz"  // DU
+  "Status IC"  // DU
+  "Status JIC" // DU, optional
+  "Letzte Klassierung"]  // Classification
+
+let duKeys = [
+  "Abzug w.o."
+  "Alterskategorie"
+  "Status Lizenz"
+  "Status IC"
+  "Status JIC"]

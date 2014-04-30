@@ -45,6 +45,9 @@ type PlayerDetails = {
   StatusIC: string  // "IC berechtigt" // bool?
   StatusJIC: string  // "nicht JIC" // bool?
   LastClassification: Classification  // "R3"
+
+  // take from MatchResults of opponents detail sheet
+  LastCompetitionsValue4L: value
 }
 
 type TournamentType =
@@ -72,8 +75,8 @@ type MatchResult = {
   Tournament: Tournament
   OpponentName: string  // TODO: remove? (redundancy)
   OpponentLicenseNo: string
-  CompetitionValue: value  // (4.L.)...
-  SetResults: (int * int)[]  // [(6, 3); (6, 3)]
+  OpponentCompetitionValue: value  // (4.L.)...
+  SetResults: (int * int)[]  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
   OutCome: MatchOutcome
 }
 

@@ -14,7 +14,7 @@ type Sex = Male | Female
 let parseAHVNo (s: string) =
   match (s.Split ('.') |> Array.map int) with
   | [|a; b; c; d|] -> (a, b, c, d)
-  | _ -> failwith (sprintf "Invalid AHV number: %s" s)
+  | _ -> failwithf "Invalid AHV number: %s" s
 
 let getSex ((_, _, sexAndBirthDay, _): AHVNo) =
   match sexAndBirthDay with
@@ -25,7 +25,7 @@ let getSex ((_, _, sexAndBirthDay, _): AHVNo) =
 // the last number was added as sentinel.
 let getBirthDate ((_, birthYear, sexAndBirthDay, _): AHVNo as n) =
   let dayInYear = (sexAndBirthDay - 100) % 400
-  if dayInYear = 0 then failwith (sprintf "Birthdate unknown: %A" n)
+  if dayInYear = 0 then failwithf "Birthdate unknown: %A" n
   let monthStarts = [1; 32; 63; 101; 132; 163; 201; 232; 263; 301; 332; 363; 401]
   let month = monthStarts |> List.findIndex (fun x -> dayInYear < x)
   let day = dayInYear - monthStarts.[month - 1] + 1

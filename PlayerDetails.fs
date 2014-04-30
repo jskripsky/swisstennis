@@ -60,13 +60,12 @@ let extractDetails (htmlDoc: HtmlDocument) =
     let trim (s: String) = s.Trim()
     let toTuple = function
       | k::v::_ -> (k, v)
-      | _ as list -> failwith (sprintf "Invalid '[key; value]' list: %A." list)
+      | _ as list -> failwithf "Invalid '[key; value]' list: %A." list
     line
     |> split
     |> Array.map trim
     |> Array.toList
     |> toTuple
-
 
   (* Competition Results *)
   let matchResultRows =

@@ -83,7 +83,7 @@ type PlayerDetails = {
   LastClassification: Classification  // "R3"
 
   // take from MatchResults of opponents detail sheet
-  LastCompetitionsValue4L: value
+  // LastCompetitionsValue4L: value
 
   MatchResults: MatchResult list
 }

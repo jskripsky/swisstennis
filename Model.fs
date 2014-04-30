@@ -30,37 +30,7 @@ type Player = {
   State: char
 }
 
-type PlayerDetails = {
-  Name: string  // "Master"
-  FirstName: string  // "Hans"
-  LicenseNo: string  // "000-00-000-0"
-  Clubs: string[]  // ["TC Sporting Derendingen (Stammmitglied)"]
-
-  CurrentClassification: Classification  // "R3"
-  CurrentClassificationValue: value  // 7.820
-  CurrentCompetitionValue: value  // 7.291
-  CurrentRiskValue: value  // 0.529
-  RankNo: int  // 757
-  MatchCount: int // 21
-  WOCount: int  // 0
-  WODeduction: string  // "nein"
-  AgeCategory: string  // "35+"
-  StatusLicense: string  // "aktiv", "suspendiert" // bool?
-  StatusIC: string  // "IC berechtigt", "nicht IC berechtigt" // bool?
-  StatusJIC: string  // "JIC  berechtigt", "nicht JIC  berechtigt" // bool?
-  LastClassification: Classification  // "R3"
-
-  // take from MatchResults of opponents detail sheet
-  LastCompetitionsValue4L: value
-}
-
-let ageCategories = seq {
-  for i in [10..2..18] do yield ((string i) + "&U")
-  yield "A"; yield "35+"  // women: "30+"; "40+"
-  for i in [45..5..75] do yield ((string i) + "+")
-}
-
-
+(* Player Details and Match Results *)
 type TournamentType =
   | InterClub
   | Regular
@@ -88,6 +58,38 @@ type MatchResult = {
   OpponentName: string  // TODO: remove? (redundancy)
   OpponentLicenseNo: string
   OpponentCompetitionValue: value  // (4.L.)...
-  SetResults: (int * int)[]  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
+  SetResults: (int * int) list  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
   OutCome: MatchOutcome
+}
+
+type PlayerDetails = {
+  Name: string  // "Master"
+  FirstName: string  // "Hans"
+  LicenseNo: string  // "000-00-000-0"
+  Clubs: string list  // ["TC Sporting Derendingen (Stammmitglied)"]
+
+  CurrentClassification: Classification  // "R3"
+  CurrentClassificationValue: value  // 7.820
+  CurrentCompetitionValue: value  // 7.291
+  CurrentRiskValue: value  // 0.529
+  RankNo: int  // 757
+  MatchCount: int // 21
+  WOCount: int  // 0
+  WODeduction: string  // "nein"
+  AgeCategory: string  // "35+"
+  StatusLicense: string  // "aktiv", "suspendiert" // bool?
+  StatusIC: string  // "IC berechtigt", "nicht IC berechtigt" // bool?
+  StatusJIC: string  // "JIC  berechtigt", "nicht JIC  berechtigt" // bool?
+  LastClassification: Classification  // "R3"
+
+  // take from MatchResults of opponents detail sheet
+  LastCompetitionsValue4L: value
+
+  MatchResults: MatchResult list
+}
+
+let ageCategories = seq {
+  for i in [10..2..18] do yield ((string i) + "&U")
+  yield "A"; yield "35+"  // women: "30+"; "40+"
+  for i in [45..5..75] do yield ((string i) + "+")
 }

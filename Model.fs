@@ -80,6 +80,7 @@ type MatchOutcome =
 
 //type MatchResultValue = MatchOutcome * value  // value of rival
 
+// TODO: DB primary key: (Date, Tournament, MyID, OpponentID)?
 type MatchResult = {
   DiscardedLoss: bool  // "X" or " "
   Date: Date  // "05.05.13"
@@ -90,4 +91,3 @@ type MatchResult = {
   SetResults: (int * int)[]  // e.g. [(6, 3); (6, 3)], (Me, Opponent)
   OutCome: MatchOutcome
 }
-

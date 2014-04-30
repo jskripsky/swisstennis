@@ -5,6 +5,11 @@ open HotFeet.OldAHVNumber
 open SwissTennis.Model
 
 
+let doc = HtmlDocument()
+doc.Load("downloads/players/790-74-165-0.html")
+extractDetails doc
+
+
 (*
 // Juraj, Martin, Jan, Paris (4.11.71):
 parseBirthDate "790.76.127.0"

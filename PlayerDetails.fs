@@ -49,11 +49,12 @@ let extractDetails (htmlDoc: HtmlDocument) =
   let valuesP = rootEl.SelectSingleNode ("//table[1]//td[2]//table//tr[2]/td[2]/p")
 
   let innerText (n: HtmlNode) = n.InnerText.Trim()
+  let innerHtml (n: HtmlNode) = n.InnerHtml.Trim()
   let extractLines (n: HtmlNode) =
     n.ChildNodes
     |> Seq.cast<HtmlNode>
     |> Seq.filter (fun n -> n.NodeType = HtmlNodeType.Text)
-    |> Seq.map innerText
+    |> Seq.map innerHtml
 
   let parseKeyValueLine line =
     let split (s: String) = s.Split(':')
@@ -80,7 +81,7 @@ let extractDetails (htmlDoc: HtmlDocument) =
     if tds <> null then
       tds
       |> Seq.cast<HtmlNode>
-      |> Seq.map innerText
+      |> Seq.map innerHtml
     else
       Seq.empty
 
@@ -110,9 +111,10 @@ let extractDetails (htmlDoc: HtmlDocument) =
     {
       IsDiscardedLoss = discardedLoss
       Date = DateTime.ParseExact (cells.[1], "dd.MM.yy", null)
-      Tournament = { ID = -1; Type = Regular; Name = "[FIXME]" }
-      OpponentName = "[FIXME]"
-      OpponentLicenseNo = "[FIXME]"
+      Tournament =
+        { ID = -1; Type = Regular; Name = cells.[2] }  // FIXME
+      OpponentName = cells.[3] // FIXME
+      OpponentLicenseNo = "[FIXME]" // cells.[3]
       OpponentCompetitionValue = cells.[4] |> float
       OpponentNewClassification = cells.[5] |> Classification.Parse
       SetResults = setResults

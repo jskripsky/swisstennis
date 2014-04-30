@@ -12,6 +12,10 @@ type Classification =
   | R of int // N 1..4, R 1..9
   override x.ToString () = (sprintf "%A" x).Replace (" ", String.Empty)
   static member All = [for i in [1..4] -> N i] @ [for i in [1..9] -> R i]
+  static member Parse (s: string) =
+    let (letter, digit) = (s.[0], s.[1] |> string |> int)
+    let constr = match letter with | 'N' -> N | 'R' -> R | _ -> failwithf "Invalid classification: '%s'" s
+    constr digit
 
 type value = float
 

@@ -29,14 +29,14 @@ let reduceHtml html =
   |> replaceWith htmlHeadRegex simpleHead
   |> remove emptyLineRegex
 
-let downloadDetails licNo =
-  let html = client.DownloadString(detailUrl licNo) |> reduceHtml
+let downloadDetails (wc: WebClient) licNo =
+  let html = wc.DownloadString(detailUrl licNo) |> reduceHtml
   let fileName = sprintf "%s/%s.html" downloadsDir (licNo.Replace(".", "-"))
   File.WriteAllText(fileName, html)
 
-let downloadAll licNoFile =
+let downloadAll (wc: WebClient) licNoFile =
   let list = File.ReadAllLines(licNoFile)
-  list |> Array.iter downloadDetails
+  list |> Array.iter (downloadDetails wc)
 
 
 

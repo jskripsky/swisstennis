@@ -175,11 +175,11 @@ let extractDetails (htmlDoc: HtmlDocument) =
     RankNo = v "Ranglistennummer" |> int
     MatchCount = v "Anzahl Spiele" |> intOrZero
     WOCount = v "Anzahl w.o." |> int
-    WODeduction = v "Abzug w.o."
+    WODeduction = (v "Abzug w.o." = "ja")
     AgeCategory = v "Alterskategorie"
-    StatusLicense = v "Status Lizenz"
-    StatusIC = v "Status IC"
-    StatusJIC = v "Status JIC"
+    StatusLicense = (v "Status Lizenz" = "aktiv")
+    StatusIC = (v "Status IC" = "IC berechtigt")
+    StatusJIC = match (v "Status JIC") with null -> None | "JIC berechtigt" -> Some true | _ -> Some false
     LastClassification = v "Letzte Klassierung" |> parseClassificationOption
 
     // take from MatchResults of opponents detail sheet

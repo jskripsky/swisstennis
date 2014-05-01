@@ -79,11 +79,11 @@ type PlayerDetails = {
   RankNo: int  // 757
   MatchCount: int // 21
   WOCount: int  // 0
-  WODeduction: string  // "nein"
+  WODeduction: bool  // "nein", "ja"
   AgeCategory: string  // "35+"
-  StatusLicense: string  // "aktiv", "suspendiert" // bool?
-  StatusIC: string  // "IC berechtigt", "nicht IC berechtigt" // bool?
-  StatusJIC: string  // "JIC  berechtigt", "nicht JIC  berechtigt" // bool?
+  StatusLicense: bool  // "aktiv", "suspendiert"
+  StatusIC: bool  // "IC berechtigt", "nicht IC berechtigt"
+  StatusJIC: bool option // "JIC  berechtigt", "nicht JIC  berechtigt", null
   LastClassification: Classification option  // "R3"
 
   // take from MatchResults of opponents detail sheet

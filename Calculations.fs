@@ -3,8 +3,8 @@ module SwissTennis.Calculations
 open SwissTennis.Model
 
 // From http://www.swisstennis.ch/
-// Wettkampf > Rules & Regulations > Reglemente > Klassierungsrichtlinien (KR)
-// http://www.swisstennis.ch/upload/docs/wettkampf/2014_Klassierungsrichtlinien-d.pdf
+// National > Klassierungen > Klassierungsrichtlinien
+// https://www.swisstennis.ch/sites/default/files/2016_klassierungsrichtlinien-d.pdf
 
 // Art. 3.2
 let allPlayers = 50323 // Swisstennis Website, 2014-04

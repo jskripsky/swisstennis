@@ -27,14 +27,15 @@ let interpolatedRanking rank =
   |> function (c, (r1, r2)) -> (c, (float (rank - r1)) / (float (r2 - r1 + 1)))
 
 // Art. 5.6, 5.7
-let term factor sign w0 (defeatedWs: seq<value>) (lostWs: seq<value>) =
-  let eSum w0 ws = Seq.sumBy exp ws + exp w0
-  let neg ws = Seq.map (~-) ws
+let term factor sign w0 (wonWs: seq<value>) (lostWs: seq<value>) =
+  let s = seq { yield w0; yield! wonWs }
+  let n = seq { yield w0; yield! lostWs }
+  let sum ws = ws |> Seq.sumBy exp |> log
 
-  let defeatSum = eSum w0 defeatedWs
-  let lostSum = eSum -w0 (neg lostWs) 
+  let s' = sum s
+  let n' = sum (n |> Seq.map (~-))
 
-  factor * (log defeatSum + sign * (log lostSum))
+  factor * (s' + sign * n')
 
 type Calc = value -> seq<value> -> seq<value> -> value
 
@@ -51,7 +52,7 @@ let roundN n x =
 let round3 = roundN 3
 // round3 0.1234567 = 0.123
 
-let C w0 defeatedWs lostWs = W w0 defeatedWs lostWs + R w0 defeatedWs lostWs  |> round3
+let C w0 wonWs lostWs = W w0 wonWs lostWs + R w0 wonWs lostWs  |> round3
 //  C 3.750 [4.0; 2.5] [4.6; 3.0; 2.4; 1.9] = 3.505
 // (http://www.tc-rosental.ch/IC_Interessenten.htm, rounding of C instead of W and R)
 

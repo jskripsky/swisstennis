@@ -58,8 +58,8 @@ let C w0 wonWs lostWs = W w0 wonWs lostWs + R w0 wonWs lostWs  |> round3
 
 
 // Art. 5.5
-let numOfLossesToIgnore matches = matches / 6 |> min 4
-// [0; 1; 5; 6; 7; 12; 18; 24; 30; 36] |> List.map numOfLossesToIgnore = [0; 0; 0; 1; 1; 2; 3; 4; 4; 4]
+let numOfVoidLosses matches = min (matches / 6) 4
+// [0; 1; 5; 6; 7; 12; 18; 24; 30; 36] |> List.map numOfVoidLosses = [0; 0; 0; 1; 1; 2; 3; 4; 4; 4]
 
 // Art. 5.2: Ausgangspunkt für die Berechnung des neuen Wettkampfwertes W ist der Wettkampfwert W0, der vom Wettkampfwert 5 (W5) der vorangegangenen Periode abgeleitet wird. Der Mindestausgangswert beträgt 1.
 // Art. 5.3: 

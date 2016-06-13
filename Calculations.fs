@@ -68,6 +68,18 @@ let numOfVoidLosses matches = min (matches / 6) 4
 // Art. 5.9: Alle lizenzierten Spieler werden nach dem gemäss Abs.1 bis 8 berechneten Klassierungswert C sortiert.
 // Art. 5.10
 
+let removeVoidLosses wonWs lostWs =
+  let matchesCount = (Seq.length wonWs) + (Seq.length lostWs)
+  let num = numOfVoidLosses matchesCount
+  lostWs
+  |> Seq.sort
+  |> Seq.skip num
+
+
+let C' w0 wonWs lostWs =
+  let lostWs' = removeVoidLosses wonWs lostWs
+  C w0 wonWs lostWs'
+
 // Art. 8.1 Berücksichtigung der Resultate: Das Klassierungsjahr wird in zwei Klassierungsperioden eingeteilt.
 // Die erste dauert vom 1. April bis zum 30. September, die zweite vom 1. Oktober bis zum 31. März des folgenden Jahres.
 let periods startYear = [(Date (startYear, 4, 1), Date (startYear, 9,30)); (Date (startYear, 10, 1), Date (startYear + 1, 3, 31))]

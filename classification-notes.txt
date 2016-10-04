@@ -1,0 +1,33 @@
+Source: SwissTennis, April 2014
+
+Classification vs. Value
+
+N1: 17.594-14.256
+N2: 14.255-13.046
+N3: 13.045-11.942
+N4: 11.941-10.571
+R1: 10.570-9.418
+R2: 9.417-8.147
+R3: 8.146-6.910
+R4: 6.909-5.772
+R5: 5.771-4.675
+R6: 4.674-3.421
+R7: 3.420-1.815
+R8: 1.813-0.834
+R9: 0.834-0.313
+
+Fresh R9: 0.750
+
+R9 Total: 19553
+
+R9 > 0.750: ~850 (Extrapolation von obersten 500 der R9)
+R9 = 0.750: ~17'000 (grep "0.750" * | wc)
+=> R9 < 0.750: ~1700
+
+=>
+(850+1700) = 2550 bzw.
+(2550/17000) = 15%
+der R9 Spieler sind tatsächlich aktiv
+
+
+Average number of matches for a Rx-Player?

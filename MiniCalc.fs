@@ -28,8 +28,8 @@ let round3 (x: float) = System.Math.Round (x, 3)
 
 let calcCWR w0 (wonWs, lostWs) =
   let lostWs' = removeVoidLosses (wonWs, lostWs)
-  let pair =   (w0::wonWs, w0::lostWs')
-  let (w, r) = (W pair, R pair)
+  let results =   (w0::wonWs, w0::lostWs')
+  let (w, r) = (W results, R results)
 
   (w + r |> round3, w, r)
 

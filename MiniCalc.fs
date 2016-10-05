@@ -18,7 +18,7 @@ let term factor sign (wonWs: list<float>, lostWs: list<float>) =
   let s' = sum wonWs
   let n' = sum (lostWs |> List.map inv) |> inv
 
-  factor * (s' - sign * n')
+  factor * (s' + sign * n')
 
 type Calc = (list<float> * list<float>) -> float
 let W: Calc = term (1.0 / 2.0) 1.0

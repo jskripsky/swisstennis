@@ -1,0 +1,67 @@
+//table[1]//td[1]//table//tr[2]//p
+
+Vorname: Hannes
+Name: Aeberhard
+Lizenz-Nr: 100.61.433.0
+
+
+//table[1]//td[1]//table//tr[4]//p
+
+TC Sporting Derendingen (Stammmitglied)
+
+
+//table[1]//td[2]//table//tr[2]/td[1]/p
+
+Aktuelle Klassierung
+Aktueller Klassierungswert
+Aktueller Wettkampfwert
+Aktueller Risikozuschlag
+Ranglistennummer
+Anzahl Spiele
+Anzahl w.o.
+Abzug w.o.
+Alterskategorie
+Status Lizenz
+Status IC
+Status JIC  <= optional!
+Letzte Klassierung
+
+
+//table[1]//td[2]//table//tr[2]/td[2]/p
+
+R3
+7.82
+7.291
+0.529
+757
+21
+0
+nein
+50+
+aktiv
+IC berechtigt
+nicht JIC
+R3
+
+
+
+table[@class='listing']//tr[@class='tableRowWhite' or @class='tableRowGrey']
+
+X
+05.05.13
+IC 45+ NLC ("http://comp.swisstennis.ch/ic2013/servlet/EncountResults?EncountId=229353&Year=2013&Lang=D")
+Landolt Hanspeter ("/custom/includes/wettkampf/klassierung_window/?show=detail&LizenzNr=577.61.319.0&lang=D")
+4.228
+R6
+6:0 6:1
+S
+
+(Streichniederlage)
+Datum
+Turnier
+Name Gegner
+Wettk.Wert 4.L.
+Klass.neu
+Resultat
+Code
+

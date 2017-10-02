@@ -2,6 +2,7 @@
 
 module SwissTennis.Download
 
+open System
 open FSharp.Data
 
 let loadResults userId =
@@ -15,22 +16,23 @@ let loadResults userId =
         let div = doc.CssSelect(curCompValueCss) |> Seq.head
         let curCompetitionValue = float (div.InnerText())
 
-        let processRow (row : HtmlNode) =
-                let cells = row.Elements("td") |> List.rev
-                if (cells.[setsIdx].InnerText().Trim()) <> String.Empty then
-                        Some (cells.[codeIdx].InnerText(), float (cells.[valIdx].InnerText()))
-                else
-                        None
-
-        let rows = doc.CssSelect(matchResultRowsCss)
         let matchResults =
-                let isWin (code, _) = (code = "S" || code = "W")
-                let getValues (x, y) = (x |> List.map snd, y |> List.map snd)
+          let rows = doc.CssSelect(matchResultRowsCss)
+          let processRow (row: HtmlNode) =
+                  let cells = row.Elements("td") |> List.rev
+                  let getText idx = cells.[idx].InnerText().Trim()
+                  if getText setsIdx <> String.Empty then
+                          Some (getText codeIdx, getText valIdx |> float)
+                  else
+                          None
 
-                rows
-                |> List.choose processRow
-                |> List.partition isWin
-                |> getValues
+          let isWin (code, _) = (code = "S" || code = "W")
+          let getValues (x, y) = (x |> List.map snd, y |> List.map snd)
+
+          rows
+          |> List.choose processRow
+          |> List.partition isWin
+          |> getValues
 
         (curCompetitionValue, matchResults)
 

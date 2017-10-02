@@ -14,6 +14,13 @@ let losses = [1.632; 2.967; 3.282; 1.278; 2.649; 1.720; 4.693; 0.602; 2.188; 2.3
 calcCWR 1.185 (wins, losses)
 //val it : float * float * float = (1.843, 1.314, 0.529)
 
+(*
+  let cur, (wins, losses) = loadResults 2733
+  let wins' = List.append wins [1.694; 1.985; 2.35]
+  calcCWR cur (wins', losses)
+*)
+
+
 
 // Stefan Burger
 calcCWR 1.781 ([1.000; 0.703], [2.574; 0.870; 2.668])
